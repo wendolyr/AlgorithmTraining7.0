@@ -1,6 +1,6 @@
 CC = g++
 FLAGS = -Wall -Werror -Wextra -Wpedantic -std=c++20
-FILE_PATH = task_G.cc
+FILE_PATH = task_H.cc
 
 all: clean build
 
