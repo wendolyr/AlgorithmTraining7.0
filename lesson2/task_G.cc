@@ -32,6 +32,8 @@ class Segment_tree {
       all_null[i] = false;
     }
 
+    seq_size[i] = seq_size[l_child] + seq_size[r_child];
+
     values[i] = max(values[l_child], values[r_child]);
 
     longest_null_seq[i] =
@@ -47,8 +49,6 @@ class Segment_tree {
       temp += null_prefix[r_child];
     }
     longest_null_seq[i] = max(longest_null_seq[i], temp);
-
-    seq_size[i] = seq_size[l_child] + seq_size[r_child];
 
     if (!all_null[i]) {
       null_prefix[i] = all_null[l_child] ? seq_size[l_child] : 0;
@@ -132,10 +132,12 @@ class Segment_tree {
       change = 1;
       all_null[tree_ind] = true;
       longest_null_seq[tree_ind] = 1;
+      seq_size[tree_ind] = 1;
     } else if (val != 0 && values[tree_ind] == 0) {
       change = 1;
       all_null[tree_ind] = false;
       longest_null_seq[tree_ind] = 0;
+      seq_size[tree_ind] = 1;
     }
 
     values[tree_ind] = val;
@@ -153,7 +155,10 @@ class Segment_tree {
   }
 
   int find_max_seq(int left, int right) {
-    auto result = find_max_seq(left, right, 0, size / 2, size - 1);
+    left--;
+    right--;
+    auto result =
+        find_max_seq(left + size / 2, right + size / 2, 0, size / 2, size - 1);
 
     return result.longest_null_seq;
   }
