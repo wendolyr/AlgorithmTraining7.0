@@ -26,7 +26,7 @@ class Segment_tree {
     }
 
     for (int i = middle + n.size(); i < size; i++) {
-      values[i] = 0;
+      values[i] = LLONG_MIN;
     }
 
     for (int i = middle - 1; i >= 0; i--) {
@@ -63,17 +63,19 @@ class Segment_tree {
                        values[2 * node + 2] + promises[node]);
   }
 
-  long long find_elem(int index) {
-    index--;
+  long long find_max(int left, int right) {
+    left--;
+    right--;
 
-    return find_elem(size / 2 + index, 0, size / 2, size - 1);
+    return find_max(left + size / 2, right + size / 2, 0, size / 2, size - 1);
   }
 
-  long long find_elem(int find_index, int node, int node_l, int node_r) {
-    if (node_l > find_index || node_r < find_index) {
-      return -1;
+  long long find_max(int left, int right, int node, int node_l, int node_r) {
+    if (node_l > right || node_r < left) {
+      return LLONG_MIN;
     }
-    if (node == find_index) {
+
+    if (node_l >= left && node_r <= right) {
       return values[node];
     }
 
@@ -85,15 +87,12 @@ class Segment_tree {
       promises[node] = 0;
     }
 
-    long long result = 0;
-    int middle = (node_l + node_r) / 2;
-    if (find_index <= middle)
-      result = find_elem(find_index, 2 * node + 1, node_l, middle);
-    else {
-      result = find_elem(find_index, 2 * node + 2, middle + 1, node_r);
-    }
+    long long l_child =
+        find_max(left, right, 2 * node + 1, node_l, (node_l + node_r) / 2);
+    long long r_child =
+        find_max(left, right, 2 * node + 2, (node_l + node_r) / 2 + 1, node_r);
 
-    return result;
+    return max(l_child, r_child);
   }
 };
 
@@ -113,10 +112,10 @@ int main() {
   for (int i = 0; i < k; i++) {
     char command = ' ';
     cin >> command;
-    if (command == 'g') {
-      int position = 0;
-      cin >> position;
-      cout << data.find_elem(position) << endl;
+    if (command == 'm') {
+      pair<int, int> range;
+      cin >> range.first >> range.second;
+      cout << data.find_max(range.first, range.second) << ' ';
     } else if (command == 'a') {
       pair<int, int> range;
       int add = 0;
