@@ -3,28 +3,24 @@
 
 using namespace std;
 
-void set_bit(int x, int y, int z, vector<vector<vector<unsigned int>>> &board) {
-  int num_int = z >> 5;
-  int num_bit = z % 32;
+void set_bit(int a, int b, vector<vector<unsigned long long>>& board) {
+  int num_int = b >> 6;
+  int num_bit = b & 63;
 
-  board[x][y][num_int] |= (1 << num_bit);
-}
-
-int get_bit(int x, int y, int z,
-            const vector<vector<vector<unsigned int>>> &board) {
-  int num_int = z >> 5;
-  int num_bit = z % 32;
-
-  return board[x][y][num_int] & (1 << num_bit) ? 1 : 0;
+  board[a][num_int] |= (1ULL << num_bit);
 }
 
 int main() {
+  ios::sync_with_stdio(false);
+  cin.tie(nullptr);
+
   int n = 0, k = 0;
   cin >> n >> k;
 
-  int size = (n + 31) >> 5;
-  vector<vector<vector<unsigned int>>> board(
-      n, vector<vector<unsigned int>>(n, vector<unsigned int>(size, 0)));
+  int size = (n + 63) >> 6;
+  vector<vector<unsigned long long>> yz(n, vector<unsigned long long>(size, 0)),
+      xz(n, vector<unsigned long long>(size, 0)),
+      xy(n, vector<unsigned long long>(size, 0));
 
   for (int i = 0; i < k; i++) {
     int x = 0, y = 0, z = 0;
@@ -33,28 +29,51 @@ int main() {
     y--;
     z--;
 
-    for (int j = 0; j < n; j++) {
-      for (int q = 0; q < n; q++) {
-        set_bit(x, j, q, board);
-        set_bit(j, y, q, board);
-        set_bit(j, q, z, board);
-      }
-    }
+    set_bit(y, z, yz);
+    set_bit(z, x, xz);
+    set_bit(y, x, xy);
   }
 
-  for (int i = 0; i < n; i++) {
-    for (int j = 0; j < n; j++) {
-      for (int q = 0; q < n; q++) {
-        if (!get_bit(i, j, q, board)) {
-          cout << "NO" << endl;
-          cout << i + 1 << ' ' << j + 1 << ' ' << q + 1;
-          return 0;
+  if (k == 0) {
+    cout << "NO" << endl << "1 1 1" << endl;
+    return 0;
+  }
+
+  for (int y = 0; y < n; ++y) {
+    for (int wz = 0; wz < size; ++wz) {
+      unsigned long long freeZ = ~yz[y][wz];
+      while (freeZ) {
+        int counter = 0;
+        unsigned long long temp = freeZ;
+        while ((temp & 1) == 0) {
+          temp >>= 1;
+          counter++;
         }
+        int z = (wz << 6) + counter;
+        if (z >= n) break;
+
+        for (int wx = 0; wx < size; ++wx) {
+          unsigned long long freeX = ~(xz[z][wx]) & ~(xy[y][wx]);
+          if (freeX) {
+            counter = 0;
+            temp = freeX;
+            while ((temp & 1) == 0) {
+              temp >>= 1;
+              counter++;
+            }
+            int x = (wx << 6) + counter;
+            if (x >= n) continue;
+            cout << "NO" << endl
+                 << x + 1 << ' ' << y + 1 << ' ' << z + 1 << endl;
+            return 0;
+          }
+        }
+        freeZ &= freeZ - 1;
       }
     }
   }
 
-  cout << "YES";
+  cout << "YES" << endl;
 
   return 0;
 }

@@ -13,31 +13,19 @@ int main() {
     cin >> a[i];
   }
 
-  unsigned long long result = a[0];
+  unsigned long long max = a[0];
 
   for (int i = 1; i < n; i++) {
-    result ^= a[i];
+    if (a[i] > max) {
+      max = a[i];
+    }
   }
 
-  if (!result) {
-    for (int i = 0; i < n; i++) {
-      cout << a[i] << ' ';
-    }
-  } else {
-    unsigned long long max = 0;
-    for (int i = 0; i < n; i++) {
-      if (a[i] > max) {
-        max = a[i];
-      }
-    }
-
-    int counter = 0;
-    while (max != 0) {
-      max >>= 1;
-      counter++;
-    }
-
-    for (int i = 0; i <) }
+  int max_bits = 0;
+  while (max) {
+    max_bits++;
+    max >>= 1;
+  }
 
   return 0;
 }
