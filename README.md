@@ -1,2 +1,8 @@
 # Тренировки по алгоритмам 7.0 от Яндекса
-Мои решения к задачам контеста, условия задач: https://yandex.ru/yaintern/training/algorithm-training
+Мои решения к задачам контеста:  
+https://yandex.ru/yaintern/training/algorithm-training
+
+# Сертификат  
+Сертификат, подтверждающий моё участие и вхождение в топ 350 участников:  
+[!img](/images/sertificate.png)  
+*Результаты также доступны на странице контеста.*
